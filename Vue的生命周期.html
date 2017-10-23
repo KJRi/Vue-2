@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    
+    <p>{{message}}</p>
+    <button type="button" @click="change">改变</button>
+</div>
+</body>
+<html>
+<script>
+var app = new Vue({
+    el:'#app',
+    data:{
+        message:"Hello Vue!"
+        
+    },
+    methods:{
+        change:function(){
+            this.message = 'msg:'+Math.random().toFixed(2);
+        }
+    },
+    // Vue的生命周期
+    // 每个Vue实例在被创建的时候都要经过一系列的初始化过程
+    // 创建 - 渲染 - 更新 - 销毁，执行这个过程时就会调用声明周期函数
+    created () {
+        console.log('Vue实例创建好了');
+    },
+    mounted () {
+        console.log('Vue实例被渲染到视图上')
+    },
+    updated () {
+        console.log('Vue实例被更新了');
+    },
+    destroyed () {
+        console.log('Vue实例被销毁了');
+    }
+});
+
+setTimeout(function() {
+    app.$destroy();
+}, 5000);
+</script>

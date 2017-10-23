@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+    <style>
+    .active{
+        background-color: red
+    }
+    .center{
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+<div id="app">
+    <p :class="classObj">这是一段话</p>
+    <p :class="classArr">这个二段话</p>
+    <p :class="[classObj,'center']">这个三段话</p>
+
+
+    <!-- style 内联样式：绑定对象或者数组 -->
+    <p :style="styleObj1">heml vue</p>
+    <p :style="[styleObj1,styleObj2]">Htmll 你好 vue</p>
+</div>
+</body>
+<html>
+<script>
+var app = new Vue({
+    el:'#app',
+    data:{
+        classObj:{
+            'active':true,
+            'center':false
+        },
+        classArr:['active','center'],
+        styleObj1:{
+            'color':'red',
+            'font-size':'30px'
+        },
+        styleObj2:{
+            'border':'1px solid red',
+            'width':'200px'
+        }
+    }
+});
+</script>
