@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+    <style>
+    dt,dd{
+        display: inline-block;
+    }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h1>工资计算器</h1>
+    <main>
+        <p>总工资：<input type="number" v-model.number="income"></p>
+        <p v-show="income < 1600">最低工资不能低于：1600元</p>
+        <dl v-show="income >= 1600">
+            <div v-for="rate in rates">
+                <dt>{{rate.name}}<input type="number" v-model.number="rate.rate">%</dt>
+                <dd>{{normIncome*rate.rate/100 | number}}</dd>
+            </div>
+            <div>
+                <dt>税前工资</dt>
+                <dd>{{beforeTax | number}}</dd>
+            </div>
+            <div>
+                <dt>税税说税</dt>
+                <dd>{{tax | number}}</dd>
+            </div>
+            <div>
+                <dt>实发工资</dt>
+                <dd>{{afterTax | number}}</dd>
+            </div>
+        </dl>
+    </main>
+
+    <xx :income="income" :rates="rates"></xx>
+</div>
+</body>
+</html>
+<script>
+// Vue.filter();
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        // 总工资
+        income: 10000,
+        rates: [
+            {name:'养老保险',rate:8},
+            {name:'医疗保险',rate:2},
+            {name:'失业保险',rate:0.5},
+            {name:'生育保险',rate:0},
+            {name:'工伤保险',rate:0},
+            {name:'住房公积金',rate:5}
+        ]
+    },
+    filters: {
+        number: function(value){
+            return '￥'+value.toFixed(2);
+        }
+    },
+    computed: {
+        totalRate:function(){
+            // 让数组中的每一个元素参与函数运算，然后把每一次运算的结果放在第一个参数里面
+            // prev: 存放上一次运行完结果
+            // item： 当前数组中的元素
+            // index: 元素的索引值
+            // arr: 数组本身
+            // reduce(cb,value):如果有value，prev的初始是就是value
+            // 如果没有value,prev的初始值在是数组中第一个元素的值
+            var total = this.rates.reduce(function(prev,item,index,arr){
+                // console.log(prev);
+                prev += item.rate;
+                return prev;
+            },0);
+            return total;
+        },
+        // 基准工资
+        normIncome:function(){
+            return this.income<7662 ? this.income : 7662;
+        },
+        // 税前收入（扣除三险一金后的月收入）
+        beforeTax:function(){
+            return this.income - this.normIncome*this.totalRate/100;
+        },
+        // 税
+        tax:function(){
+            // 计税工资（应纳税所得额）
+            var incomeOfTax = this.beforeTax - 3500;
+            if (incomeOfTax <= 0) {
+                return 0;
+            }else if (incomeOfTax <= 1500) {
+                return incomeOfTax*0.03;
+            }else if (incomeOfTax <= 4500) {
+                return incomeOfTax*0.1 - 105
+            }else if (incomeOfTax <= 9000) {
+                return incomeOfTax*0.2 - 555
+            }else if (incomeOfTax <= 35000) {
+                return incomeOfTax*0.25 - 1005
+            }else if (incomeOfTax <= 55000) {
+                return incomeOfTax*0.3 - 2755
+            }else if (incomeOfTax <= 80000) {
+                return incomeOfTax*0.35 - 5505
+            }else{
+                return incomeOfTax*0.45 - 13505
+            }
+        },
+        // 税后工资
+        afterTax: function(){
+            return this.beforeTax - this.tax;
+        }
+    }
+});
+</script>

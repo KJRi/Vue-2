@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<!-- 父组件的模板 -->
+<div id="app">
+    <!-- 使用自定义组件 -->
+    <my-div></my-div>
+    <my-div2></my-div2>
+
+    <!-- 有些标签会限制可以出现在内部的字标签种类，例如：ul、ol、table、select等，如果我们在这些标签里面使用自定义指令，就会造成浏览器解析html出错，为了避免这个错误，可以使用is属性 -->
+    <table>
+        <!-- <my-row></my-row>
+        <my-row></my-row> -->
+        <tr is="my-row"></tr>
+        <tr is="my-row"></tr>
+    </table>
+    
+</div>
+<div id="app2">
+    <!-- <my-div></my-div>
+    <my-div2></my-div2> -->
+</div>
+</body>
+</html>
+<!-- 自定义组件的模板 -->
+<script id="com" type="text/html">
+    <!-- 一个组件的模板内只能有一个根元素，如果标签表多的时候，可以用一个div包裹起来 -->
+    <div>
+        <h1>自定义组件</h1>
+        <h2>呵呵</h2>
+        <p>{{message}}</p>
+        <button @click="count ++">count:{{count}}</button>
+    </div>
+</script>
+<script>
+
+// 注册组件：有两种方式 全局组件 和 局部组件   ---子组件
+
+// 方式一：注册全局组件
+// Vue.component(tagName, options)
+// 参数1：组件的id，使用组件时，类似标签的使用方式，也可以看成是标签名
+// 参数2：自定义数据
+Vue.component('my-div',{
+    // template 定义组件的模板
+    // 如果组件的内容比较简单的时候，使用这种方式定义模板
+    // template: '<div>自定义组件 {{message}}</div>',
+    // 如果组件内容复杂的时候，可以通过id链接模板
+    template: '#com',
+    // 自定义子组件的数据，data必须是一个函数，函数的返回值是组件的数据对象
+    data: function(){
+        return {
+            message: 'hello 自定义组件',
+            count: 0
+        }
+    }
+});
+
+Vue.component('my-row',{
+    template: '<tr><td>姓名：</td></tr>'
+});
+
+
+
+// 这是父组件
+var app = new Vue({
+    el:'#app',
+    data:{
+        
+    },
+    // 方式二：注册局部组件，只能在父组件的模板中使用
+    components: {
+        'my-div2':{
+            template: '<p>自定义局部组件</p>'
+        }
+    }
+});
+var app2 = new Vue({
+    el: '#app2'
+})
+</script>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+
+    <p>
+        <input type="text" v-model="message">父组件message:{{message}}
+    </p>
+    <!-- 
+        父组件向子组件传递数据时：
+        不加v-bind时，parentvalue="message"含义是：传递的是一个普通的字符串message
+        添加v-bind时，:parentvalue="message"含义是：传递的是父组件中message变量的值
+        
+        单项数据流：
+        prop是单项绑定的：父组件中属性的变化会传递到子组件中，反之，不行；
+    -->
+    <!-- 传递的是一个普通字符串 -->
+    <!-- <my-div parentvalue="message"></my-div> -->
+    <!-- 传递的是message变量 -->
+    <my-div :parentvalue="message"></my-div>
+
+    <ul>
+        <li v-for="(s,index) in students">
+            {{index}}.{{s.name}}
+        </li>
+    </ul>
+
+    <my-add :stus="students"></my-add>
+    
+</div>
+</body>
+</html>
+<script id="com" type="text/html">
+    <div>
+        <p>子组件</p>
+        <p>partentValue的值：{{parentvalue}}</p>
+        <!-- 直接修改父组件传递过来的数据 会报错 -->
+        <button @click="parentvalue='呵呵----'">改变parentvalue</button>
+        <p>selfvalue的值：{{selfvalue}}</p>
+        <button @click="selfvalue='呵呵呵呵呵'">改变selfvalue</button>
+    </div>
+</script>
+<script>
+// 父组件向子组件传递数据，因为每一个组件的作用域都是独立的，所以要把父组件的数据在子组件中显示，就要使用props来定义属性绑定父组件中的数据
+Vue.component('my-div',{
+    template: '#com',
+    // parentvalue 是接受从父组件传递过来的数据
+    props: ['parentvalue'],
+    // 在子组件中不能修改从父组件传递过来的数据，否则会出现警告
+    // 如果想修改，使用一个属性selfvalue，从父组件传递过来的数据只作为这个属性的初始值
+    data:function(){
+        return {
+            selfvalue: this.parentvalue
+        }
+    }
+});
+
+Vue.component('my-add',{
+    template:'<button @click="add()">添加学生</button>',
+    props: ['stus'],
+    methods: {
+        add(){
+            // 在js中对象 和 数组是引用类型，stus和students执行同一个内存空间
+            // 如果props接受的是一个对象或者数组，在子组件中改变它会影响到父组件中该属性的值
+
+            // 可以：只是向数组中添加一个元素，数组还是原来的数组
+            // this.stus.push({name:'xxx'});
+
+            // 不可以：数组被重新赋值，不是原来的数组
+            this.stus = [{name:'xxx'}]
+        }
+    }
+})
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        message: 'hello parent!',
+        students: [
+            {name:'Tom'},
+            {name:'Lily'}
+        ]
+    }
+});
+
+
+// 值传递
+// 引用传递
+</script>

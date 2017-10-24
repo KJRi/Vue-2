@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <!-- .number 会把用户输入的值自动转化为 number类型 -->
+    <p>语文：<input type="text" v-model.number="chinese"> </p>
+
+    <!-- 
+        绑定的数据如果是一个变量，则可以直接绑定变量名
+        绑定的数据如果需要通过data中的主句计算得来，对于简单的计算可以直接绑定一个表达式，如果计算过程比较复杂，无法通过一个简单的表达式计算出结果，则需要将计算过程写入一个函数放入methods 或者 computed中，然后调用这个函数或者这个计算属性，如果计算过程比较庞大，推荐使用computed
+     -->
+    <p>
+        总分：{{total}}
+    </p>
+
+    <!-- methods 的应用：使用methods中的方法时，需要在方法名后添加圆括号 -->
+    <p>结果：{{result1()}}</p>
+    <p>结果：{{result1()}}</p>
+    <p>结果：{{result1()}}</p>
+    <!-- computed 的应用：使用computed中的计算属性时，不需要加圆括号，当成一个属性来使用 -->
+    <p>结果：{{result2}}</p>
+    <p>结果：{{result2}}</p>
+    <p>结果：{{result2}}</p>
+    
+</div>
+</body>
+</html>
+<script>
+var app = new Vue({
+    el:'#app',
+    data:{
+        chinese: 60,
+        math: 60,
+        english: 60
+    },
+    // methods中的方法，调用一次就会执行一次
+    methods: {
+        total: function(){
+            return this.chinese + this.math + this.english;
+        },
+        result1: function(){
+            console.log('methods result');
+            var total = this.chinese + this.math + this.english;
+            if (total < 180) {
+                return '不及格'
+            }else if (total < 240) {
+                return '良好'
+            }else{
+                return '优秀'
+            }
+        }
+    },
+    // computed计算属性
+    // computed 和 methods 相比
+    // methods中的函数，在模板中使用一次就会执行一次
+    // computed中的计算属性：当函数中所依赖的属性值发生变化时才会重新计算，否则使用上一次计算缓存的结果，所以，如果一个运算比较耗费性能且需要使用多次，建议使用computed
+    computed: {
+        // 当模板中绑定的数据是通过data中的数据计算得出的，此时可以将计算函数写入计算属性，在模板直接绑定这个属性就可以得到结果，比如：{{total}}
+        total: function(){
+            return this.chinese + this.math + this.english;
+        },
+        result2: function(){
+            console.log('computed result');
+            console.log(this.total);
+            // var total = this.chinese + this.math + this.english;
+            if (this.total < 180) {
+                return '不及格'
+            }else if (this.total < 240) {
+                return '良好'
+            }else{
+                return '优秀'
+            }
+        }
+    }
+});
+</script>

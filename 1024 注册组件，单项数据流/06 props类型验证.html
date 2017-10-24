@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <my-div :name="name" :sex="sex" :age="age"></my-div>
+</div>
+</body>
+</html>
+<script id="com" type="text/html">
+    <div>
+        <p>姓名：{{name}}</p>
+        <p>性别：{{sex}}</p>
+        <p>年龄：{{age}}</p>
+        <p>身高：{{height}}</p>
+        <p>挚爱：姓名：{{lover.name}},年龄:{{lover.age}}</p>
+    </div>
+</script>
+<script>
+Vue.component('my-div',{
+    template: '#com',
+    // 类型验证：指定props的类型，如果传入的数据类型不符，Vue会报警公告
+    // 常用的几种类型：String Number Boolean Function Object Array
+    // props可以设置为对象类型来显示传值的类型
+    props:{
+        // 字符串
+        name:String,
+        // 可以是多种类型
+        sex:[Boolean,String],
+        // 必须传值且是数字类型，如果不传递会报错
+        age:{
+            type:Number,
+            required:true,
+            // 自定义验证函数
+            validator:function(value){
+                return value > 0;
+            }
+        },
+        height:{
+            type: Number,
+            // 指定默认值
+            default: 180
+        },
+        // 数组/对象的默认值应当由一个工厂函数返回
+        lover:{
+            type:Object,
+            default:function(){
+                return {
+                    name: 'Lily',
+                    age: 20
+                }
+            }
+        }
+    }
+})
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        name: 'Tom',
+        sex: true,
+        age: 22
+    }
+});
+</script>
