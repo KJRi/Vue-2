@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <com>
+        <!-- 添加scope属性的template标签，是作用域插槽的模板
+            scope的值是变量名（对象），此对象接受从子组件中传递的数据
+        -->
+        <template slot="students" scope="data">
+            <p>{{data}}</p>
+            <h2>{{data.stu.name}}</h2>
+        </template>
+    </com>
+</div>
+</body>
+</html>
+<script id="com" type="text/html">
+    <div>
+        <ul>
+            <!-- 作用域插槽：可以从子组件传递数据到作用域插槽的模板 -->
+            <li v-for="stu in stus">
+                <!-- 给slot添加属性stu，属性值就是要传递的数据 -->
+                <slot name="students" :stu="stu"></slot>
+            </li>
+        </ul>
+    </div>
+</script>
+<script>
+
+Vue.component('com',{
+    template:'#com',
+    data(){
+        return {
+            stus:[
+                {name:'Tom',age:22},
+                {name:'Liy',age:20}
+            ]
+        }
+    }
+})
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        
+    }
+});
+</script>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <!-- slot内容分发（插槽）：混合父组件的内容到子组件的模板 -->
+
+    <!-- 1.单个插槽 slot -->
+    <!-- 
+        message: 绑定的父组件的数据
+        组件作用域：父组件模板的内容在父组件作用域内编译；子组件模板的内容在子组件作用域内编译。
+     -->
+    <com1>
+        <p>父组件的作用域：{{message}}</p>
+    </com1>
+
+    <!-- 2.具名slot -->
+    <com2>
+        <h1 slot="header">标题</h1>
+        <p>主要内容</p>
+        <div slot="footer">版权信息</div>
+    </com2>
+</div>
+</body>
+</html>
+<script id="com1" type="text/html">
+    <div>
+        <p>
+            <h1>组件1</h1>
+            <!-- 
+                message:绑定的是子组件的数据
+             -->
+             <!-- 
+                 如果子组件模板中没有slot标签，那么父组件的内容会被丢弃
+                 如果存在一个slot标签，那么父组件的内容会被插入slot标签所在的位置，并替换掉slot标签
+
+                当父组件的内容为空时才能显示slot标签的内容
+              -->
+            <slot>子组件的内容：{{message}}</slot>
+        </p>
+    </div>
+</script>
+<script id="com2" type="text/html">
+    <div>
+        <!-- 
+            当有多个插槽时，就要用到具名slot，使用name属性给slot起名，插入内容时，指明插入哪个slot
+            也可以指定一个匿名slot，作为不具有slot属性的内容片段的插槽
+            如果没有匿名slot，具有slot属性的内容片段将被抛弃
+         -->
+        <header>
+            <slot name="header"></slot>
+        </header>
+        <main>
+            <slot></slot>
+        </main>
+        <footer>
+            <slot name="footer"></slot>
+        </footer>
+    </div>
+</script>
+<script>
+Vue.component('com1',{
+    template:'#com1',
+    data(){
+        return {
+            message: 'hello from 组件1'
+        }
+    }
+})
+Vue.component('com2',{
+    template:'#com2'
+});
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        message: 'hello from app'
+    }
+});
+</script>

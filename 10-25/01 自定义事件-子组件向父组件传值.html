@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <!-- 
+        @myclick 监听子组件触发的名称为 myclick 的自定义事件，
+        当监听到事件后，执行say()方法，say方法的默认参数是子组件传递过来的数据
+     -->
+    <com @myclick="say"></com>
+
+    <hr>
+
+    <!-- 
+        如果在子组件的根元素上监听原生事件（系统所提供的事件：click、mouseup）
+        需要添加.native 的事件修饰符，原生事件的回调函数默认参数是 $event 对象
+     -->
+    <com @click.native="run"></com>
+
+</div>
+</body>
+</html>
+<script id="com" type="text/html">
+    <div>
+        <h2>子组件</h2>
+        <button @click="commit">提交</button>
+    </div>
+</script>
+<script>
+
+Vue.component('com',{
+    template: '#com',
+    methods: {
+        commit(){
+            // console.log('子组件的 commit 方法');
+
+            // 子组件向父组件传值的方式：自定义事件
+            // 子组件触发事件，父组件监听事件
+
+            // $emit 触发一个自定义事件
+            // 参数1：事件名称，比如：myclick， 监听时：@myclick=""
+            // 参数2：要传递的数据
+            this.$emit('myclick','hello from 子组件');
+        }
+    }
+})
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        
+    },
+    methods:{
+        // 接收到子组件传递的值
+        say(value){
+            // console.log(arguments);
+            console.log(value);
+        },
+        run(){
+            console.log('run');
+        }
+    }
+});
+</script>

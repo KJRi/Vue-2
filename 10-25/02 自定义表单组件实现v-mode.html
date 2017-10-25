@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <p>
+        <!-- v-model="" 双向数据绑定 -->
+        <input type="text" v-model="message"> message:{{message}}
+    </p>
+    <p>
+        <input type="text" :value="message" @input="changeMsg"> message:{{message}}
+    </p>
+    <!-- v-model="message" 等价于下面：
+        :value="message" 把message的值给 value，显示在输入框中
+        @input="message=arguments[0].target.value" 把输入框的值给到message
+
+        要想让v-model生效，当输入框值变化时触发input事件，并变化的值赋给message
+     -->
+    <p>
+        <input type="text" :value="message" @input="message=arguments[0].target.value"> message:{{message}}
+    </p>
+    <hr>
+
+    <!-- 自定义一个组件来实现v-model -->
+    <!-- 
+        1.通过父组件向子组件传值:value="message"，实现了message的值给到自定义input
+        2.通过 @input="message=arguments[0] 实现了把自定义input标签的内容给到message
+        以上两步就实现了v-model="message"
+     -->
+    <myinput :value="message" @input="message=arguments[0]"></myinput>
+    <!-- <myinput :value="message" @input="receValue"></myinput> -->
+
+    <myinput v-model="message"></myinput>
+    
+</div>
+</body>
+</html>
+<script id="com" type="text/html"> 
+    <div>
+        自定义input：<input type="text" :value="value" @input="changValue">
+    </div>
+</script>
+<script>
+Vue.component('myinput',{
+    template:'#com',
+    props:['value'],
+    methods:{
+        changValue(ev){
+            // console.log(arguments);
+            // console.log(ev.target.value);
+            this.$emit('input',ev.target.value);
+        }
+    }
+});
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        message: 'hello from app'
+    },
+    methods:{
+        changeMsg(ev){
+            // console.log(arguments[0]);
+            // console.log(ev);
+            // 把输入框的值给到 message
+            this.message = arguments[0].target.value;
+        },
+        receValue(value){
+            // console.log(value);
+            // this.message = value;
+            // console.log(arguments);
+            this.message = arguments[0];
+        }
+    }
+});
+</script>

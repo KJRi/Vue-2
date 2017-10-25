@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <com1></com1>
+    <com2></com2>
+</div>
+</body>
+</html>
+<script>
+// 非父子组件之间的通信：借助一个空的vue实例作为中央事件总线
+var bus = new Vue();
+
+Vue.component('com1',{
+    template: '<button @click="add">组件1:{{num}}</button>',
+    data(){
+        return {
+            num: 0
+        }
+    },
+    methods: {
+        add(){
+            // 发射事件
+            bus.$emit('changenum',++this.num);
+        }
+    }
+})
+
+Vue.component('com2',{
+    template: '<p>组件2：{{count}}</p>',
+    data(){
+        return {count: 0}
+    },
+    created () {
+        // 监听事件
+        bus.$on('changenum',function(value){
+            console.log(value);
+            // 在这里this的指向是bus，要注意改变this的指向
+            // console.log(this == bus);
+            this.count = value;
+        }.bind(this));
+    }
+});
+
+// 单向数据流：Vue中数据的传递只能是自上而下的，父组件传递给子组件，通过prop接受值；子组件通过事件发射$emit来实现与父组件的通信；非父子组件之间的通信可以通过一个空的Vue实例作为中央事件总线监听$on 和 发射$emit事件，进行值的传递；更为复杂的情况可以通过vuex
+
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        
+    }
+});
+</script>

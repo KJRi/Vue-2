@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+    <style>
+    dt,dd{
+        display: inline-block;
+    }
+    </style>
+</head>
+<body>
+<div id="app">
+    
+    <my-main :sincome="income" :srates="rates"></my-main>
+
+    <hr>
+    <!-- <my-main :sincome="income" :srates="rates"></my-main>
+    <my-main :sincome="income" :srates="rates"></my-main> -->
+    <!-- var sincome = income -->
+</div>
+</body>
+</html>
+<script id="com" type="text/html">
+    <main>
+        <h1>工资计算器</h1>
+        <p>总工资：<input type="number" v-model.number="selfincome"></p>
+        <p v-show="selfincome < 1600">最低工资不能低于：1600元</p>
+        <dl v-show="selfincome >= 1600">
+            <!-- <div v-for="rate in selfrates"> -->
+            <div v-for="rate in srates">
+                <dt>{{rate.name}}<input type="number" v-model.number="rate.rate">%</dt>
+                <dd>{{normIncome*rate.rate/100 | number}}</dd>
+            </div>
+            <div>
+                <dt>税前工资</dt>
+                <dd>{{beforeTax | number}}</dd>
+            </div>
+            <div>
+                <dt>税税税税</dt>
+                <dd>{{tax | number}}</dd>
+            </div>
+            <div>
+                <dt>实发工资</dt>
+                <dd>{{afterTax | number2}}</dd>
+            </div>
+        </dl>
+    </main>
+</script>
+<script>
+Vue.filter('number2',function(value){
+    return '￥'+ value.toFixed(2);
+});
+
+Vue.component('my-main',{
+    template: '#com',
+    // parentvalue 是接受从父组件传递过来的数据
+    // 如果props接受的是一个对象或者数组，在子组件中改变它会影响到父组件中该属性的值  
+    props: ['sincome','srates'],
+    // 在子组件中不能修改从父组件传递过来的数据，否则会出现警告
+    // 如果想修改，使用一个属性selfvalue，从父组件传递过来的数据只作为这个属性的初始值
+    data:function(){
+        return {
+            selfincome: this.sincome,               // 这俩不能起同一个名字, selfrates貌似相当于一个地址,保存父组件传过来数据
+            selfrates: this.srates                  // 这俩不能起同一个名字
+        }
+    },
+    filters: {
+        number: function(value){
+            return '￥'+value.toFixed(2);
+        }
+    },
+    computed: {
+        totalRate:function(){
+            // 让数组中的每一个元素参与函数运算，然后把每一次运算的结果放在第一个参数里面
+            // prev: 存放上一次运行完结果
+            // item： 当前数组中的元素
+            // index: 元素的索引值
+            // arr: 数组本身
+            // reduce(cb,value):如果有value，prev的初始是就是value
+            // 如果没有value,prev的初始值在是数组中第一个元素的值
+            var total = this.selfrates.reduce(function(prev,item,index,arr){
+            // var total = this.srates.reduce(function(prev,item,index,arr){
+                // console.log(prev);
+                prev += item.rate;
+                console.log(prev);
+                return prev;                 // ??
+            },0);
+            console.log(total);
+            return total;
+        },
+        // 基准工资
+        normIncome:function(){
+            return this.selfincome<7662 ? this.selfincome : 7662;
+        },
+        // 税前收入（扣除三险一金后的月收入）
+        beforeTax:function(){
+            return this.selfincome - this.normIncome*this.totalRate/100;
+        },
+        // 税
+        tax:function(){
+            // 计税工资（应纳税所得额）
+            var incomeOfTax = this.beforeTax - 3500;
+            if (incomeOfTax <= 0) {
+                return 0;
+            }else if (incomeOfTax <= 1500) {
+                return incomeOfTax*0.03;
+            }else if (incomeOfTax <= 4500) {
+                return incomeOfTax*0.1 - 105
+            }else if (incomeOfTax <= 9000) {
+                return incomeOfTax*0.2 - 555
+            }else if (incomeOfTax <= 35000) {
+                return incomeOfTax*0.25 - 1005
+            }else if (incomeOfTax <= 55000) {
+                return incomeOfTax*0.3 - 2755
+            }else if (incomeOfTax <= 80000) {
+                return incomeOfTax*0.35 - 5505
+            }else{
+                return incomeOfTax*0.45 - 13505
+            }
+        },
+        // 税后工资
+        afterTax: function(){
+            return this.beforeTax - this.tax;
+        }
+    }
+});
+var app = new Vue({
+    el:'#app',
+    data:{
+        // 总工资
+        income: 10000,
+        rates: [
+            {name:'养老保险',rate:8},
+            {name:'医疗保险',rate:2},
+            {name:'失业保险',rate:0.5},
+            {name:'生育保险',rate:0},
+            {name:'工伤保险',rate:0},
+            {name:'住房公积金',rate:5}
+        ]
+    }
+});
+</script>

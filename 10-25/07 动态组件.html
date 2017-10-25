@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+</head>
+<body>
+<div id="app">
+
+    <button @click="change">切换组件</button>
+
+    <!-- keep-alive：将切换出去的组件保存在内存中，避免重复的销毁重建 -->
+    <keep-alive>
+        <!-- :is动态绑定一个变量，变量的取值就是要显示的组件的名称 -->
+        <component :is="currentView"></component>
+    </keep-alive>
+    
+    
+</div>
+</body>
+</html>
+<script>
+Vue.component('com1',{
+    template: '<p>组件1</p>',
+    destroyed () {
+        console.log('组件1 被销毁了');
+    }
+})
+Vue.component('com2',{
+    template: '<p>组件2</p>',
+    destroyed () {
+        console.log('组件2 被销毁了');
+    }
+})
+Vue.component('com3',{
+    template: '<p>组件3</p>',
+    destroyed () {
+        console.log('组件3 被销毁了');
+    }
+})
+
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        currentView: 'com1',
+        index: 1
+    },
+    methods: {
+        change(){
+            this.index = this.index==3 ? 1 : this.index+1;
+            this.currentView = 'com' + this.index;
+        }
+    }
+});
+</script>

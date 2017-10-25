@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="vue.js"></script>
+    <style>
+    *{
+        box-sizing: border-box;
+    }
+    #box{
+        width: 200px;
+        height: 200px;
+        /* background: rgb(100.1, 100, 100); */
+    }
+    .border{
+        height: 10px;
+        border: 1px solid #000;
+        border-radius: 5px;
+        margin: 20px 0;
+    }
+    .progress{
+        width: 100px;
+        height: 8px;
+        background-color: green;
+        border-radius: 4px;
+        position: relative;
+    }
+    .slider{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-image: radial-gradient(circle,#fff,#000);
+        position: absolute;
+        top: -10px;
+        right: -15px;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div id="box" :style="{'background':color}"></div>
+
+    R:<slider :width="300" :value="r" @input="r=arguments[0]"></slider>
+    G:<slider :width="300" v-model="g"></slider>
+    B:<slider :width="300" v-model="b"></slider>
+
+</div>
+</body>
+</html>
+<script id="slider" type="text/html">
+    <!-- 边框 -->
+    <div class="border" :style="{'width':width+'px'}">
+        <!-- 进度 -->
+        <div class="progress" :style="{'width':selfvalue*width+'px'}">
+            <!-- 滑块 -->
+            <div class="slider" @mousedown="startMove" @mouseup="stopMove" @mouseleave="stopMove"></div>
+        </div>
+    </div>
+</script>
+<script>
+Vue.component('slider',{
+    template: '#slider',
+    props:{
+        width:{default: 200},
+        value:{default: 0.5}
+    },
+    data(){
+        return {
+            selfvalue: this.value
+        }
+    },
+    methods: {
+        startMove(ev){
+            // console.log(this);
+            // console.log(ev);
+            // 给类名为slider的div绑定鼠标移动的事件
+            // 注意：在这里鼠标事件里面的this指向div,要改变this的指向
+            ev.target.onmousemove = function(ev){
+                // console.log(ev);
+                // 计算滑块距离父元素左边的距离 progress的长度
+                var distance = ev.clientX - ev.target.parentElement.offsetLeft;
+                // console.log(this);
+                // 转化成比例
+                var ratio = distance/this.width;
+                // 边界约束
+                this.selfvalue = ratio<0 ? 0 : (ratio>1 ? 1 : ratio);
+                // console.log(this.selfvalue);
+                // 传递数据给父组件
+                this.$emit('input',this.selfvalue);
+            }.bind(this)
+            
+        },
+        stopMove(ev){
+            ev.target.onmousemove = null;
+        },
+    }
+});
+
+
+
+var app = new Vue({
+    el:'#app',
+    data:{
+        r: 0.5,
+        g: 0.5,
+        b: 0.5
+    },
+    // rgb(100,100,100)
+    computed: {
+        color(){
+            return 'rgb('+Math.floor(this.r*255)+','+Math.floor(this.g*255)+','+Math.floor(this.b*255)+')';
+        }
+    }
+});
+</script>
