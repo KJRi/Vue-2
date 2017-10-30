@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1">
+    <meta name="author" content="金西振">
+    <title></title>
+    <script src="./vue.js"></script>
+    <script src="./jquery.js"></script>
+</head>
+<body>
+    <div id="app">
+            <button @click="crosClick">跨域请求</button>
+    </div>
+    
+</body>
+</html>
+<script>
+var app = new Vue({
+    el:'#app',
+    methods:{
+        // 浏览器跨域访问限制：在同一域名的页面中AJAX请你去只能请求本域名的url，如果请求其他域名url，或者同一域名，但是端口号不同的url，就变成了不被允许的跨域请求
+        // 跨域是由浏览器的同源策略造成的，同源：是指域名、协议、端口均相同
+        // 根本原因：浏览器中身份验证信息都存储在cookie中，而cookie按照域名存储，为了cookie信息不被其他域名下的页面盗用，所以禁止AJAX跨域请求
+        crosClick(){
+            console.log('跨域请求');
+            // Access-Control-Allow-Origin
+            // 跨域请求解决方式一：
+            // 在接口的响应报文的响应头添加 Access-Control-Allow-Origin 字段，将接口标记为允许跨域访问 res.set('Access-Control-Allow-Origin','*')，* 是任何域名都可以访问
+            // $.get('http://127.0.0.1:4000/user',data=>{
+            //     console.log(data);
+            // });
+            
+            // 跨域请求解决方式二：JSONP
+            // JSON: 是一种数据交换格式
+            // JSONP：是一种非官方的跨域交互协议
+
+            // JSONP的原理
+            // 凡是拥有 src 属性的标签都有跨域的能力，比如: script img
+            // var script = document.createElement('script');
+            // script.src = 'http://127.0.0.1:4000/user?username=jxz&callback=add';
+            // document.body.appendChild(script);
+
+            // 如果url中包含字符串 callback=? （或者类似的参数）,这个请求被视为JSONP形式的请求
+            var url = 'http://api.map.baidu.com/telematics/v3/weather?callback=?';
+            var params = {
+                location:'太原市',
+                output:'json',
+                ak:'iw5m2G7ayDow8ofDdDGVUMB3',
+                mcode:'com.BaiduWeather'
+            };
+                
+            $.getJSON(url,params,data=>{
+                console.log(data);
+            })
+
+        }
+    }
+})
+
+function add(data){
+    console.log(data);
+}
+</script>
