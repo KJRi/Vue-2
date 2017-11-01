@@ -1,0 +1,20 @@
+Vux
+移动端UI组件库，主要服务于微信页面
+
+1、安装vue-cli
+    npm install vue-cli -g
+    (vue-cli依赖于webpack，使用vue-cli前需要先安装webpack：npm install webpack -g)
+
+2、创建项目文件夹，并在该目录中打开命令行
+
+3、项目初始化 
+    vue init airyland/vux2
+    
+4、cd到项目中，下载所有依赖项
+    npm install
+
+5、运行项目(调试环境)
+    npm run dev
+
+6、当项目完成时，打包项目。
+    npm run build
